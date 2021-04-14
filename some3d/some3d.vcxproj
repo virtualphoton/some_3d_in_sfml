@@ -145,10 +145,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="some3d.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="voronoy.shader" />
+    <None Include="shaders\camera_test.frag" />
+    <None Include="shaders\simple3d.frag" />
+    <None Include="shaders\voronoy.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="vectors.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

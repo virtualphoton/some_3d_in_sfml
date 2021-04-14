@@ -18,10 +18,27 @@
     <ClCompile Include="some3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="voronoy.shader">
+    <None Include="shaders\simple3d.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="shaders\voronoy.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\camera_test.frag">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
