@@ -1,6 +1,6 @@
 #pragma once
 
-inline double clamp(double val, double min, double max) {
+double clamp(double val, double min, double max) {
 	if (val < min)
 		return min;
 	if (val > max)

@@ -3,9 +3,26 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include "useful_funcs.h"
+#include <map>
+#include <string>
 
+#define KB(Symbol) sf::Keyboard::Symbol
 
 double pi = 3.14159265;
+
+struct move_info_struct {
+	double speed = 1;
+	std::map<sf::Keyboard::Key, vec3> bindings;
+	void init() {
+		// {key_idx: (right, forw, up)}
+		bindings[KB(D)] = {1, 0, 0};
+		bindings[KB(A)] = {-1, 0, 0};
+		bindings[KB(W)] = {0, 1, 0};
+		bindings[KB(S)] = {0, -1, 0};
+		bindings[KB(LShift)] = {0, 0, 1};
+		bindings[KB(LControl)] = {0, 0, -1};
+	}
+};
 
 class Camera {
 public:
@@ -17,6 +34,8 @@ public:
 	double zoom = 1024./768;
 	vec3 fixed_up;
 	bool up_is_fixed = false;
+	double move_speed = .1;
+	move_info_struct move_info;
 
 	Camera(vec3 const & pos_, vec3 const & f_, vec3 const& up_, bool up_is_fixed_=false): orig(pos_){
 		up_is_fixed = up_is_fixed_;
@@ -25,6 +44,7 @@ public:
 		fixed_up = normalize(up_);
 		right = cross(forward, fixed_up);
 		up = cross(right, forward);
+		move_info.init();
 	}
 
 	void rotate(mat3 const & R) {
@@ -48,12 +68,15 @@ public:
 		rotate(R);
 	}
 
-	void move(double dr, double df, double du) {
-		orig += dr;
-		if (up_is_fixed) {
-
-		}
+	void move_on_press(double dt) {
+		for (auto & elem : move_info.bindings)
+			if (sf::Keyboard::isKeyPressed(elem.first)) {
+				mat3 fixed_up_frame = mat3(right, cross(fixed_up, right), fixed_up);
+				orig += elem.second * (up_is_fixed ? fixed_up_frame : frame) * dt;
+			}
+		
 	}
+
 
 	void send_uniforms(sf::Shader & shader) {
 		shader.setUniform("ro", orig.uniform());

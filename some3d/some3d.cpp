@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <ctime>
 #include "camera.h"
 #include "vectors.h"
 
@@ -19,13 +18,18 @@ int main() {
         return 1;
     }
     shader.setUniform("iResolution", sf::Vector2<float>(W, H));
+
     vec3 c_pos(-3, 1, 2);
     Camera cam(c_pos, {0, 0, 1}, {0, 1, 0}, true);
-    auto start = clock();
+
+    sf::Clock clock_abs;
+    sf::Clock clock_delta;
+    double dt;
     sf::Vector2i center(W / 2, H / 2);
     bool space_pressed = false;
     while (window.isOpen()) {
-        shader.setUniform("iTime", float(clock() - start) / CLOCKS_PER_SEC);
+        dt = clock_delta.restart().asSeconds();
+        shader.setUniform("iTime", float(clock_abs.getElapsedTime().asSeconds()));
         cam.send_uniforms(shader);
         sf::Event event;
         while (window.pollEvent(event))
@@ -45,14 +49,7 @@ int main() {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
             cam.orig -= cam.up * .02;
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            cam.orig += cam.forward*.02;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            cam.orig -= cam.forward*.02;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            cam.orig += cam.right * .02;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            cam.orig -= cam.right * .02;
+        cam.move_on_press(dt);
 
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
