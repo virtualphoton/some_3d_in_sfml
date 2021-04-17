@@ -2,28 +2,35 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 
-class vec2 {
-public:
-	double coords[3];
-	double & x = coords[0], & y = coords[1];
-	vec2(double x, double y) {
-		coords[0] = x;
-		coords[1] = y;
-	}
-	vec2(vec2 const & p) {
-		(*this) = p;
-	}
-	double & operator[](int idx) {
-		return coords[idx];
-	}
-	double operator[](int idx) const {
-		return coords[idx];
-	}
-	void operator=(vec2 const & p) {
-		coords[0] = p[0];
-		coords[1] = p[1];
-	}
-};
+
+#define VEC_OP(O, O_EQ) \
+vec3 operator O(vec3 const & v) const { \
+	return vec3(x O v.x, y O v.y, z O v.z);\
+}\
+vec3 operator O(double d) const { \
+	return  (*this) O vec3(d);\
+}\
+template <class T>\
+void operator O_EQ(T const & v){ \
+	*this = *this O v;\
+}
+
+#define MAT_OP(O, O_EQ)\
+mat3 operator O(mat3 const & other) const{\
+	return mat3(m1 O other.m1, m2 O other.m2, m3 O other.m3);\
+}\
+mat3 operator O(vec3 const & other) const{\
+	return mat3(m1 O other, m2 O other, m3 O other);\
+}\
+mat3 operator O(double other) const{\
+	return *this O vec3(other);\
+}\
+template <class T>\
+void operator O_EQ(T const & other){\
+	*this = *this O other;\
+}
+
+class mat3;
 
 class vec3 {
 public:
@@ -38,7 +45,7 @@ public:
 		y = y_;
 		z = z_;
 	}
-	vec3(double x_) {
+	explicit vec3(double x_) {
 		x = y = z = x_;
 	}
 	vec3(vec3 const & p) {
@@ -55,18 +62,12 @@ public:
 		y = p.y;
 		z = p.z;
 	}
-	vec3 operator*(double s) const {
-		return vec3(x * s, y * s, z * s);
-	}
-	vec3 operator+(vec3 const & v) const {
-		return vec3(x + v.x, y + v.y, z + v.z);
-	}
-	vec3 operator-(vec3 const & v) const {
-		return *this + v*-1;
-	}
-	vec3 operator/(double s) const{
-		return (*this) * (1 / s);
-	}
+
+	VEC_OP(+, +=);
+	VEC_OP(-, -=);
+	VEC_OP(*, *=);
+	VEC_OP(/, /=);
+
 	sf::Vector3f uniform() {
 		return sf::Vector3f(x, y, z);
 	}
@@ -99,36 +100,45 @@ public:
 	mat3(mat3 const & p) {
 		(*this) = p;
 	}
-	vec3 operator*(vec3 const & r) {
-		return vec3(dot(mat[0], r), dot(mat[1], r), dot(mat[2], r));
-	}
-	mat3 operator*(mat3 const & other) {
-		mat3 other_t = other.T();
-		mat3 res;
-		for (int i = 0; i < 3; i += 1) {
-			for (int j = 0; j < 3; j += 1) {
-				res.mat[i][j] = dot(mat[i], other_t.mat[j]);
-			}
-		}
-		return res;
-	}
-	mat3 T() const {
-		return mat3(vec3(m1.x, m2.x, m3.x), vec3(m1.y, m2.y, m3.y), vec3(m1.z, m2.z, m3.z));
-	}
 
 	void operator=(mat3 const & other) {
 		m1 = other.m1;
 		m2 = other.m2;
 		m3 = other.m3;
 	}
+
+	mat3 operator*(double d) const {
+		return mat3(m1 * d, m2 * d, m3 * d);
+	}
+	vec3 operator*(vec3 const & r) const {
+		return vec3(dot(mat[0], r), dot(mat[1], r), dot(mat[2], r));
+	}
+	mat3 operator*(mat3 const & other)const {
+		mat3 other_t = other.T();
+		mat3 res;
+		for (int i = 0; i < 3; i += 1)
+			for (int j = 0; j < 3; j += 1)
+				res.mat[i][j] = dot(this->mat[i], other_t.mat[j]);
+		return res;
+	}
+
+	MAT_OP(+, +=);
+	MAT_OP(-, -=);
+
+	mat3 T() const {
+		return mat3(vec3(m1.x, m2.x, m3.x), vec3(m1.y, m2.y, m3.y), vec3(m1.z, m2.z, m3.z));
+	}
+
+
 };
 
-mat3 rot_oz(double t) {
-	return mat3({cos(t), -sin(t), 0}, {sin(t), cos(t), 0}, {0,0,1});
+mat3 I = mat3({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
+
+mat3 cross_repr(vec3 v) {
+	return mat3({0, -v.z, v.y}, {v.z, 0, -v.x}, {-v.y, v.x, 0});
 }
-mat3 rot_ox(double t) {
-	return mat3({1,0,0}, {0, cos(t), -sin(t)}, {0, sin(t), cos(t)});
+mat3 rot(vec3 axis, double phi) {
+	mat3 w = cross_repr(axis);
+	return I + w*sin(phi) + w*w*(1-cos(phi));
 }
-mat3 rot_oy(double t) {
-	return mat3({cos(t), 0, sin(t)}, {0, 1, 0}, {-sin(t), 0, cos(t)});
-}
+
