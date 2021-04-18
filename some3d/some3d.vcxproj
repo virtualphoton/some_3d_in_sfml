@@ -150,6 +150,7 @@
   <ItemGroup>
     <None Include="shaders\camera_test.frag" />
     <None Include="shaders\simple3d.frag" />
+    <None Include="shaders\texture_pass.frag" />
     <None Include="shaders\voronoy.frag" />
   </ItemGroup>
   <ItemGroup>

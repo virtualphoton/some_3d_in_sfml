@@ -29,6 +29,9 @@
     <None Include="shaders\camera_test.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="shaders\texture_pass.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

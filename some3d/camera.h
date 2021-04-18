@@ -11,7 +11,7 @@
 double pi = 3.14159265;
 
 struct move_info_struct {
-	double speed = 1;
+	double speed = 10;
 	std::map<sf::Keyboard::Key, vec3> bindings;
 	void init() {
 		// {key_idx: (right, forw, up)}
@@ -31,7 +31,7 @@ public:
 	vec3 & right = frame.m1, & forward = frame.m2, & up = frame.m3;
 	double sensitivity = 20;
 	double sens_mul = 1 / 10000.;
-	double zoom = 1024./768;
+	double zoom = .5;
 	vec3 fixed_up;
 	bool up_is_fixed = false;
 	double move_speed = .1;
