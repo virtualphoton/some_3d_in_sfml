@@ -1,6 +1,7 @@
 #pragma once
 #include <math.h>
 #include <SFML/Graphics.hpp>
+#include <string>
 
 
 #define VEC_OP(O, O_EQ) \
@@ -43,6 +44,7 @@ class mat3;
 
 class vec3 {
 public:
+	std::string glsl_type = "vec3";
 	double coords[3];
 	double & x = coords[0], & y = coords[1], & z = coords[2];
 	vec3() {}
@@ -102,6 +104,7 @@ vec3 & operator-=(vec3 & v, vec3 const & other) {
 
 class vec4 {
 public:
+	std::string glsl_type = "vec4";
 	double coords[4];
 	double & x = coords[0], & y = coords[1], & z = coords[2], & w = coords[3];
 	vec4() {}

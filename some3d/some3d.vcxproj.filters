@@ -58,5 +58,8 @@
     <ClInclude Include="default_shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="uniforms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

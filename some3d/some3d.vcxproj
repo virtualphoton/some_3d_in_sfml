@@ -160,6 +160,7 @@
     <ClInclude Include="default_shader.h" />
     <ClInclude Include="objects3d.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="uniforms.h" />
     <ClInclude Include="useful_funcs.h" />
     <ClInclude Include="vectors.h" />
   </ItemGroup>

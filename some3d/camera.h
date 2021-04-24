@@ -56,10 +56,10 @@ public:
 		if (not up_is_fixed)
 			rotate_angles(u_phi, 0, r_phi);
 		else {
+			double forw_angle = acos(dot(fixed_up, forward)); //angle between up_fixed and forward
+			rotate_angles(forw_angle - clamp(forw_angle - u_phi, .02, pi - .02), 0, 0);
 			mat3 R = rot(fixed_up, r_phi);
 			rotate(R);
-			double forw_angle = acos(dot(fixed_up, forward)); //angle between up_fixed and forward
-			rotate_angles(forw_angle - clamp(forw_angle - u_phi, .01, pi - .01), 0, 0);
 		}
 	}
 	void rotate_angles(double against_right, double against_forw, double against_up) {

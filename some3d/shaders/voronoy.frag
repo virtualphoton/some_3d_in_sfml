@@ -16,8 +16,8 @@ vec3 col_grid(vec2 uv){
     vec2 gv = fract(uv) - .5;
     vec2 id = floor(uv);
     float min_dist = 100.;
-    for (float x = -1.; x <= 1.; x++){
-        for (float y = -1.; y <= 1.; y++){
+    for (int x = -1; x <= 1; x++){
+        for (int y = -1; y <= 1; y++){
             vec2 offset = vec2(x, y);
             vec2 r = rnd(id+offset);
             vec2 pos = offset + cos(r*t)*.5;
