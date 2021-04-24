@@ -70,7 +70,7 @@ float ray_march_light(vec3 ro, vec3 rd, vec3 l_src) {
 }
 
 vec3 get_light(vec3 p, vec3 ro, float iterations) {
-    vec3 sky = vec3(0, 0, 0.5);
+    vec3 sky = vec3(135,206,250)/255;
     vec3 light_pos = vec3(0., 5., 6.);
     light_pos.yz *= vec2(2*sin(iTime) + .1, abs(cos(iTime))*2.) + .1;
 
@@ -93,7 +93,8 @@ vec3 get_light(vec3 p, vec3 ro, float iterations) {
     float fog = distance(p, ro);
     fog = (fog/MAX_DISTANCE - .1)*1.12;
     fog = clamp(fog, 0, 1);
-    fog *= fog;
+    fog *= fog*fog;
+    //fog -= .1;
     
     col = col*(1-fog) + sky*fog;
     return col;

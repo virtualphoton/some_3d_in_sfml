@@ -31,7 +31,7 @@ public:
 	vec3 & right = frame.m1, & forward = frame.m2, & up = frame.m3;
 	double sensitivity = 20;
 	double sens_mul = 1 / 10000.;
-	double zoom = .5;
+	double zoom = .9;
 	vec3 fixed_up;
 	bool up_is_fixed = false;
 	move_info_struct move_info;
@@ -49,6 +49,9 @@ public:
 
 	void rotate(mat3 const & R) {
 		frame = (R * frame.T()).T();
+		right = normalize(right);
+		forward = normalize(forward);
+		up = normalize(up);
 	}
 	void rotate_px(double r, double u) {
 		double r_phi = -r * sens_mul * sensitivity;

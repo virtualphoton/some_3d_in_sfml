@@ -21,7 +21,7 @@ int main() {
     sf::RectangleShape rect(sf::Vector2f(W, H));
     Shader sh;
     Plane plane_obj({0,0,1,0}, {.8, .8, .8});
-    //plane_obj.color_func = "texture(tex, fract(p.xy/5*textureSize(tex, 0).y/textureSize(tex, 0).x)).xyz";
+    plane_obj.color_func = "texture(tex, fract(p.xy/5*textureSize(tex, 0).y/textureSize(tex, 0).x)).xyz";
     //plane_obj.color_func = "(clamp(rnd_(p.xy*10), 0, 1) + .5)*vec3(194,178,128)/255";
     Sphere sph_obj({1,2,4,1}, {1, 0, 0});
     Sphere sph_obj2({2.5,2,4,1}, {0, 1, 0});
