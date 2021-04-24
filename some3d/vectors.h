@@ -72,8 +72,8 @@ public:
 		z = p.z;
 	}
 
-	sf::Vector3f uniform() {
-		return sf::Vector3f(x, y, z);
+	sf::Glsl::Vec3 uniform() {
+		return sf::Glsl::Vec3(x, y, z);
 	}
 };
 
@@ -99,6 +99,43 @@ vec3 & operator-=(vec3 & v, vec3 const & other) {
 	v = vec3(v.x + other.x, v.y + other.y, v.z + other.z);
 	return v;
 }
+
+class vec4 {
+public:
+	double coords[4];
+	double & x = coords[0], & y = coords[1], & z = coords[2], & w = coords[3];
+	vec4() {}
+	vec4(double * const & arr) {
+		vec4(arr[0], arr[1], arr[2], arr[3]);
+	}
+	vec4(double x_, double y_, double z_, double w_) {
+		x = x_;
+		y = y_;
+		z = z_;
+		w = w_;
+	}
+	explicit vec4(double x_) {
+		x = y = z = w = x_;
+	}
+	vec4(vec4 const & p) {
+		(*this) = p;
+	}
+	double & operator[](int idx) {
+		return coords[idx];
+	}
+	double operator[](int idx) const {
+		return coords[idx];
+	}
+	void operator=(vec4 const & p) {
+		x = p.x;
+		y = p.y;
+		z = p.z;
+		w = p.w;
+	}
+	sf::Glsl::Vec4 uniform() {
+		return sf::Glsl::Vec4(x, y, z, w);
+	}
+};
 
 class mat3 {
 public:

@@ -20,9 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\simple3d.frag">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="shaders\voronoy.frag">
       <Filter>Source Files</Filter>
     </None>
@@ -30,6 +27,15 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="shaders\texture_pass.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\simple3d.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\dynamic_shader_base.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="test.frag">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -41,6 +47,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="useful_funcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="objects3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="default_shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

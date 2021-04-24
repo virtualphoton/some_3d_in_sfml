@@ -149,12 +149,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\camera_test.frag" />
+    <None Include="shaders\dynamic_shader_base.frag" />
     <None Include="shaders\simple3d.frag" />
     <None Include="shaders\texture_pass.frag" />
     <None Include="shaders\voronoy.frag" />
+    <None Include="test.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="default_shader.h" />
+    <ClInclude Include="objects3d.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="useful_funcs.h" />
     <ClInclude Include="vectors.h" />
   </ItemGroup>

@@ -34,10 +34,10 @@ public:
 	double zoom = .5;
 	vec3 fixed_up;
 	bool up_is_fixed = false;
-	double move_speed = .1;
 	move_info_struct move_info;
 
-	Camera(vec3 const & pos_, vec3 const & f_, vec3 const& up_, bool up_is_fixed_=false): orig(pos_){
+	Camera(vec3 const & pos_, vec3 const & f_, vec3 const& up_, bool up_is_fixed_=false){
+		orig = pos_;
 		up_is_fixed = up_is_fixed_;
 
 		forward = normalize(f_);
@@ -72,7 +72,7 @@ public:
 		for (auto & elem : move_info.bindings)
 			if (sf::Keyboard::isKeyPressed(elem.first)) {
 				mat3 fixed_up_frame = mat3(right, cross(fixed_up, right), fixed_up);
-				orig += elem.second * (up_is_fixed ? fixed_up_frame : frame) * dt;
+				orig += move_info.speed*elem.second * (up_is_fixed ? fixed_up_frame : frame) * dt;
 			}
 		
 	}
