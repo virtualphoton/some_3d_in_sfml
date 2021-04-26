@@ -11,7 +11,7 @@
 double pi = 3.14159265;
 
 struct move_info_struct {
-	double speed = 10;
+	double speed = 3;
 	std::map<sf::Keyboard::Key, vec3> bindings;
 	void init() {
 		// {key_idx: (right, forw, up)}
@@ -80,7 +80,6 @@ public:
 		
 	}
 
-
 	void send_uniforms(sf::Shader & shader) {
 		shader.setUniform("ro", orig.uniform());
 		shader.setUniform("f", forward.uniform());
@@ -88,4 +87,5 @@ public:
 		shader.setUniform("u", up.uniform());
 		shader.setUniform("zoom", float(zoom));
 	}
+
 };

@@ -44,3 +44,10 @@ string format(string const & s, Tail const &... rep_tail) {
 	out.append(s.substr(sub_start, sub_len));
 	return out;
 }
+
+double clench(double val, double min, double max, double new_min, double new_max) {
+	return clamp((val - min) / (max - min) * (new_max - new_min) + new_min, new_min, new_max);
+}
+
+#define min(a, b) __min(a, b)
+#define max(a, b) __max(a, b)

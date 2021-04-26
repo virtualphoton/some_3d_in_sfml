@@ -11,6 +11,7 @@ uniform vec3 f;
 uniform vec3 r;
 uniform vec3 u;
 uniform float zoom;
+uniform vec3 light_pos;
 
 float get_dist(vec3 p);
 vec3 get_color(vec3 p);
@@ -61,8 +62,8 @@ float ray_march_light(vec3 ro, vec3 rd, vec3 l_src) {
         float dS = get_dist(p);
         if (dS < md) md = dS;
         dS = abs(dS);
-        if (dS < .2)
-            dS = .2;
+        if (dS < .05)
+            dS = .05;
         dO += dS;
         if(md < -.2 || dS > 50 || dot(l_src-ro, l_src-p) < 0) break;
     }
@@ -71,8 +72,6 @@ float ray_march_light(vec3 ro, vec3 rd, vec3 l_src) {
 
 vec3 get_light(vec3 p, vec3 ro, float iterations) {
     vec3 sky = vec3(135,206,250)/255;
-    vec3 light_pos = vec3(0., 5., 6.);
-    light_pos.yz *= vec2(2*sin(iTime) + .1, abs(cos(iTime))*2.) + .1;
 
     vec3 col = get_color(p);
 
@@ -94,7 +93,6 @@ vec3 get_light(vec3 p, vec3 ro, float iterations) {
     fog = (fog/MAX_DISTANCE - .1)*1.12;
     fog = clamp(fog, 0, 1);
     fog *= fog*fog;
-    //fog -= .1;
     
     col = col*(1-fog) + sky*fog;
     return col;

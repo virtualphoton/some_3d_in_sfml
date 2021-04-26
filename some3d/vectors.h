@@ -2,6 +2,7 @@
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include <string>
+#include "useful_funcs.h"
 
 
 #define VEC_OP(O, O_EQ) \
@@ -44,6 +45,7 @@ class mat3;
 
 class vec3 {
 public:
+	double epsilon = 1.e-6;
 	std::string glsl_type = "vec3";
 	double coords[3];
 	double & x = coords[0], & y = coords[1], & z = coords[2];
@@ -62,6 +64,14 @@ public:
 	vec3(vec3 const & p) {
 		(*this) = p;
 	}
+	explicit vec3(sf::Color const & p) {
+		x = p.r/255.;
+		y = p.g/255.;
+		z = p.b/255.;
+	}
+	operator bool() const { 
+		return abs(x) > epsilon or abs(y) > epsilon or abs(z) > epsilon;
+	}
 	double & operator[](int idx) {
 		return coords[idx];
 	}
@@ -74,15 +84,27 @@ public:
 		z = p.z;
 	}
 
-	sf::Glsl::Vec3 uniform() {
+	sf::Glsl::Vec3 uniform() const{
 		return sf::Glsl::Vec3(x, y, z);
 	}
+
+	sf::Color color() const{
+		return sf::Color(int(clench(x, 0, 1, 0, 255)), int(clench(y, 0, 1, 0, 255)), int(clench(z, 0, 1, 0, 255)));
+	}
+
+	sf::Color color_over(sf::Color const & px_color, double lambda) const;
 };
 
 VEC_OP(+, +=);
 VEC_OP(-, -=);
 VEC_OP(*, *=);
 VEC_OP(/, /=);
+
+sf::Color vec3::color_over(sf::Color const & px_color, double lambda) const {
+	lambda = clamp(lambda, 0, 1);
+	vec3 px_col = vec3(px_color);
+	return ((*this) * lambda + px_col * (1 - lambda)).color();
+}
 
 vec3 cross(vec3 const & v1, vec3 const & v2) {
 	return vec3(v1.y*v2.z - v1.z*v2.y, -v1.x * v2.z + v1.z * v2.x, v1.x * v2.y - v1.y * v2.x);
@@ -137,6 +159,9 @@ public:
 	}
 	sf::Glsl::Vec4 uniform() {
 		return sf::Glsl::Vec4(x, y, z, w);
+	}
+	vec3 xyz() {
+		return vec3(x, y, z);
 	}
 };
 
