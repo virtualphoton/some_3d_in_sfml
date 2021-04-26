@@ -51,3 +51,12 @@ double clench(double val, double min, double max, double new_min, double new_max
 
 #define min(a, b) __min(a, b)
 #define max(a, b) __max(a, b)
+
+template <class T>
+int sign(T x) {
+	if (x > 0)
+		return 1;
+	if (x < 0)
+		return -1;
+	return 0;
+}
