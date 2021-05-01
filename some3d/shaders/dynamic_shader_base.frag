@@ -24,6 +24,11 @@ void main() {
 	vec2 fragCoord = gl_FragCoord.xy;
 
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y;
+    if (dot(uv, uv) < .00003){
+        gl_FragColor =  vec4(1, 0, 0, 1);
+        return;
+    }
+
     float t = iTime;
 
     vec3 center = ro + f*zoom;
@@ -115,5 +120,3 @@ vec2 ray_march(vec3 ro, vec3 rd) {
 float clench(float val, float v_min, float v_max, float new_min, float new_max) {
     return clamp((val - v_min)/(v_max-v_min)*(new_max-new_min) + new_min, new_min, new_max);
 }
-
-

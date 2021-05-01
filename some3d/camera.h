@@ -11,7 +11,7 @@
 double pi = 3.14159265;
 
 struct move_info_struct {
-	double speed = 3;
+	double speed = 10;
 	std::map<sf::Keyboard::Key, vec3> bindings;
 	void init() {
 		// {key_idx: (right, forw, up)}
