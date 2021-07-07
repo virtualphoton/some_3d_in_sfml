@@ -73,7 +73,6 @@ public:
 	sf::Shader & compile() {
 		if (has_changed){
 			string some = assemble_shader();
-			std::cout << some;
 			compiled_shader.loadFromMemory(some, sf::Shader::Fragment);
 			has_changed = false;
 		}

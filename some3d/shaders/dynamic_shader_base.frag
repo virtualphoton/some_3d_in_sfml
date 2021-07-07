@@ -1,4 +1,4 @@
-#version 450
+#version 400
 #define MAX_STEPS 100
 #define MAX_DISTANCE 100.
 #define SURF_DISTANCE .01

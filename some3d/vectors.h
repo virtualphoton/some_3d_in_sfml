@@ -4,7 +4,7 @@
 #include <string>
 #include "useful_funcs.h"
 
-
+// this will be used to write shortly +, -, * and / operators for vectors (O and O_EQ are from same pair, e.g. +, +=)
 #define VEC_OP(O, O_EQ) \
 vec3 operator O(vec3 const& v0, vec3 const & v) { \
 	return vec3(v0.x O v.x, v0.y O v.y, v0.z O v.z);\
@@ -16,10 +16,12 @@ vec3 operator O(double d, vec3 const& v0){ \
 	return vec3(d) O v0;\
 }\
 template <class T>\
-void operator O_EQ(vec3 & self, T const & v){ \
+vec3 & operator O_EQ(vec3 & self, T const & v){ \
 	self = self O v;\
+	return self;\
 }
 
+// same as above but for 3x3 matrices
 #define MAT_OP(O, O_EQ)\
 mat3 operator O(mat3 const & mat0, mat3 const & other){\
 	return mat3(mat0.m1 O other.m1, mat0.m2 O other.m2, mat0.m3 O other.m3);\
@@ -37,26 +39,46 @@ mat3 operator O(double other, mat3 const & mat0){\
 	return vec3(other) O mat0;\
 }\
 template <class T>\
-void operator O_EQ(mat3 & self, T const & other){\
+mat3 & operator O_EQ(mat3 & self, T const & other){\
 	self = self O other;\
+	return self;\
 }
 
 class mat3;
 
+/* class for 3d vector. 
+* access to coordinates via x, y, z or via []
+* constructors:
+*	- from 3 numbers or initializer_list with 3 elements (e.g. vec3({1, 2, 3}))
+*	- from one number(then x = y = z = that number)
+*	- from sf::Color. Conversion is opposite of color() method(below)
+* conversions:
+*	to bool -> false if every coord < epsilon (i.e. null-vector)
+* methods:
+*	uniform() -> return uniform that can be passed to glsl shader
+*	color()   -> converts to sf::Color by scaling each coord from [0;1], double to [0;255], int. If coord is not in interval, corresponding bound is chosen
+*	color_over(new_color, lambda) -> gives color created from (lambda*100) % of this vector color and (100-lambda*100)% of new_color
+*   +=, -=, *=, /=  -> element-wise operations
+* related methods:
+*	cross(vec, vec) -> cross product
+*	dot(vec, vec)   -> dot product
+*	length(vec)     -> length, surprisingly
+*	normalize(vec)  -> vec in same direction but of length 1. if length of vec is 0, return null-vector
+*	+, -, *, /      -> element-wise operations
+*/
 class vec3 {
 public:
 	double epsilon = 1.e-6;
 	std::string glsl_type = "vec3";
-	double coords[3];
+	double coords[3]{ 0, 0, 0 };
 	double & x = coords[0], & y = coords[1], & z = coords[2];
 	vec3() {}
-	vec3(double * const & arr) {
-		vec3(arr[0], arr[1], arr[2]);
-	}
-	vec3(double x_, double y_, double z_) {
-		x = x_;
-		y = y_;
-		z = z_;
+
+	vec3(double x, double y, double z){
+
+		this->x = x;
+		this->y = y;
+		this->z = z;
 	}
 	explicit vec3(double x_) {
 		x = y = z = x_;
@@ -75,7 +97,7 @@ public:
 	double & operator[](int idx) {
 		return coords[idx];
 	}
-	double operator[](int idx) const{
+	double operator[](int idx) const {
 		return coords[idx];
 	}
 	void operator=(vec3 const &  p) {
@@ -83,15 +105,12 @@ public:
 		y = p.y;
 		z = p.z;
 	}
-
 	sf::Glsl::Vec3 uniform() const{
 		return sf::Glsl::Vec3(x, y, z);
 	}
-
 	sf::Color color() const{
 		return sf::Color(int(clench(x, 0, 1, 0, 255)), int(clench(y, 0, 1, 0, 255)), int(clench(z, 0, 1, 0, 255)));
 	}
-
 	sf::Color color_over(sf::Color const & px_color, double lambda) const;
 };
 
@@ -116,14 +135,16 @@ double length(vec3 const & v) {
 	return sqrt(dot(v, v));
 }
 vec3 normalize(vec3 const & v) {
+	if (not v)
+		return v;
 	return v / length(v);
 }
-
-vec3 & operator-=(vec3 & v, vec3 const & other) {
-	v = vec3(v.x + other.x, v.y + other.y, v.z + other.z);
-	return v;
-}
-
+/* crippled brother of vec3.
+*	has additional 'w' coord(4th)
+* methods(! only those. None others are defined(because vec3 is actually sufficient for maths and other things)):
+*	uniform() -> to uniform to be passed into glsl shader
+*	xyz()     -> returns vec3 from x, y and z of this vec4
+*/
 class vec4 {
 public:
 	std::string glsl_type = "vec4";
@@ -165,6 +186,24 @@ public:
 	}
 };
 
+/* class for 3x3 matrices
+* its rows are vec3 and accessed via m1, m2, m3 or via []
+* constructors:
+*	- from 3 vectors(row)
+* methods:
+*	T()    -> transpose of a matrix
+*   +=, -= -> element-wise operations
+*	*, *= :
+*		element wise, if multiplied by double
+*		matrix multiplication if multiplied by mat3 or vec3
+* related constants:
+*	I      -> identity matrix
+* related methods:
+*	cross_repr(vec3)    -> cross-product matrx of vector(in cross-product, if one vector is replaced by this matrix, then matrix product will be equal to cross product)
+*	rot(vec3 axis, phi) -> returns rotation matrix. Multiplication is same as rotating against axis by vector phi(in positive direction(counterclockwise)):
+*		rotated_vector = rotation_matrix*vector
+*	*, *=  - same as for method, but passed multiplier is on the left
+*/
 class mat3 {
 public:
 	vec3 mat[3];
@@ -179,13 +218,11 @@ public:
 	mat3(mat3 const & p) {
 		(*this) = p;
 	}
-
 	void operator=(mat3 const & other) {
 		m1 = other.m1;
 		m2 = other.m2;
 		m3 = other.m3;
 	}
-
 	mat3 operator*(double d) const {
 		return mat3(m1 * d, m2 * d, m3 * d);
 	}
@@ -200,7 +237,17 @@ public:
 				res.mat[i][j] = dot(this->mat[i], other_t.mat[j]);
 		return res;
 	}
-
+	vec3& operator[](int idx) {
+		return mat[idx];
+	}
+	vec3 operator[](int idx) const {
+		return mat[idx];
+	}
+	template<class T>
+	mat3& operator*=(T const& other) {
+		*this = *this * other;
+		return *this;
+	}
 	mat3 T() const {
 		return mat3(vec3(m1.x, m2.x, m3.x), vec3(m1.y, m2.y, m3.y), vec3(m1.z, m2.z, m3.z));
 	}
@@ -212,6 +259,9 @@ MAT_OP(-, -=);
 vec3 operator*(vec3 const & v, mat3 const & m){
 	return m.T() * v;
 }
+mat3 operator*(double d, mat3 const& m) {
+	return m * d;
+}
 
 mat3 I = mat3({1, 0, 0}, {0, 1, 0}, {0, 0, 1});
 
@@ -219,6 +269,7 @@ mat3 cross_repr(vec3 v) {
 	return mat3({0, -v.z, v.y}, {v.z, 0, -v.x}, {-v.y, v.x, 0});
 }
 mat3 rot(vec3 axis, double phi) {
+	//Rodrigues' rotation formula
 	mat3 w = cross_repr(axis);
 	return I + w*sin(phi) + w*w*(1-cos(phi));
 }
