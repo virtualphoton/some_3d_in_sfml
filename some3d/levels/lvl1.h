@@ -21,7 +21,7 @@ public:
         Shader sh;
 
         Plane plane_obj({0,0,1,0}, {1, 1, 1});
-        Box box_obj({4,4,4}, {10, .1, 4}, {0, 1, 1});
+        Box box_obj({4,4,4}, {10, .3, 4}, {0, 1, 1});
         box_obj.color_func = "texture(drawing, vec2(1, 0) + vec2(-1, 1)*(p.xz-vec2(-6, 0))/vec2(20, 8)).xyz";
         sh.append(&plane_obj, &box_obj);
 
@@ -30,7 +30,7 @@ public:
         sf::Shader & shader = sh.compile();
         sh.send_uniforms();
 
-        Rectangle drawing_rect({-6, 4.1, 0}, {20, 0, 0}, {0, 0, 8});
+        Rectangle drawing_rect({-6, 4.3, 0}, {20, 0, 0}, {0, 0, 8});
         sf::Image drawing;
         drawing.create(1024, 409, sf::Color(255, 255, 255));
         sf::Texture texture;
@@ -77,14 +77,23 @@ public:
                     sf::Mouse::setPosition(center, window);
 
                     window.setMouseCursorVisible(false);
-                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) or sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+                        double size;
+                        vec3 color;
+                        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                            size = 6.5;
+                            color = {0., 0, 0};
+                        } else {
+                            size = 10.5;
+                            color = {1., 1, 1};
+                        }
                         vec3 inters = drawing_rect.intersect(cam.orig, cam.forward);
                         if (inters) {
                             int x = 1023 - clench(inters.x, -6, 14, 0, 1023), y = clench(inters.z, 0, 8, 0, 408);
                             if (x_prev != -1) {
                                 bool is_same = x == x_prev and y == y_prev;
                                 if (not is_same or is_same and not is_repeat) {
-                                    draw_line(drawing, x_prev, y_prev, x, y, {0., 0, 0}, {1023., 408, 0}, 6.5);
+                                    draw_line(drawing, x_prev, y_prev, x, y, color, {1023., 408, 0}, size);
                                     x_prev = x;
                                     y_prev = y;
                                     texture.loadFromImage(drawing);
