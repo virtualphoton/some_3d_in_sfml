@@ -1,34 +1,40 @@
 #pragma once
-#include "vectors.h"
 #include <math.h>
 #include <SFML/Graphics.hpp>
+#include "vectors.h"
 #include "useful_funcs.h"
+#include "uniforms.h"
 #include <map>
 #include <string>
 
-#define KB(Symbol) sf::Keyboard::Symbol
-
 double pi = 3.14159265;
 
+/* structure containing data about basic camera movement
+*  fields:
+*    speed
+*    bindings  - map of {sf::Keyboard::Key : vector}, where vector is a 3d-vector, which coords show how far to move in right, forward and upward directions respectively
+*				(those vectors direction depend on whether upward vector of camera is fixed or not)
+*/
+#define KB(Symbol) sf::Keyboard::Symbol
 struct move_info_struct {
 	double speed = 10;
 	std::map<sf::Keyboard::Key, vec3> bindings;
-	void init() {
+	move_info_struct() {
 		// {key_idx: (right, forw, up)}
-		bindings[KB(D)] = {1, 0, 0};
-		bindings[KB(A)] = {-1, 0, 0};
-		bindings[KB(W)] = {0, 1, 0};
-		bindings[KB(S)] = {0, -1, 0};
-		bindings[KB(LShift)] = {0, 0, 1};
-		bindings[KB(LControl)] = {0, 0, -1};
+		bindings[KB(D)] = { 1, 0, 0 };
+		bindings[KB(A)] = { -1, 0, 0 };
+		bindings[KB(W)] = { 0, 1, 0 };
+		bindings[KB(S)] = { 0, -1, 0 };
+		bindings[KB(LShift)] = { 0, 0, 1 };
+		bindings[KB(LControl)] = { 0, 0, -1 };
 	}
 };
 
-class Camera {
+class Camera : public UniformsSender {
 public:
-	vec3 orig; //origin
+	vec3 orig; //origin(where camera is right now)
 	mat3 frame;
-	vec3 & right = frame.m1, & forward = frame.m2, & up = frame.m3;
+	vec3& right = frame.m1, & forward = frame.m2, & up = frame.m3;
 	double sensitivity = 20;
 	double sens_mul = 1 / 10000.;
 	double zoom = .9;
@@ -36,7 +42,7 @@ public:
 	bool up_is_fixed = false;
 	move_info_struct move_info;
 
-	Camera(vec3 const & pos_, vec3 const & f_, vec3 const& up_, bool up_is_fixed_=false){
+	Camera(vec3 const& pos_, vec3 const& f_, vec3 const& up_, bool up_is_fixed_ = false) {
 		orig = pos_;
 		up_is_fixed = up_is_fixed_;
 
@@ -44,10 +50,9 @@ public:
 		fixed_up = normalize(up_);
 		right = cross(forward, fixed_up);
 		up = cross(right, forward);
-		move_info.init();
 	}
 
-	void rotate(mat3 const & R) {
+	void rotate(mat3 const& R) {
 		frame = (R * frame.T()).T();
 		right = normalize(right);
 		forward = normalize(forward);
@@ -72,15 +77,15 @@ public:
 	}
 
 	void move_on_press(double dt) {
-		for (auto & elem : move_info.bindings)
+		for (auto& elem : move_info.bindings)
 			if (sf::Keyboard::isKeyPressed(elem.first)) {
 				mat3 fixed_up_frame = mat3(right, cross(fixed_up, right), fixed_up);
-				orig += move_info.speed*elem.second * (up_is_fixed ? fixed_up_frame : frame) * dt;
+				orig += move_info.speed * elem.second * (up_is_fixed ? fixed_up_frame : frame) * dt;
 			}
-		
+
 	}
 
-	void send_uniforms(sf::Shader & shader) {
+	void send_uniforms(sf::Shader& shader) {
 		shader.setUniform("ro", orig.uniform());
 		shader.setUniform("f", forward.uniform());
 		shader.setUniform("r", right.uniform());
