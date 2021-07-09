@@ -3,7 +3,10 @@
 #include <fstream>
 
 using std::string;
-
+/* reads text of base shader(which will be used for creating other shaders) and writes it into body field of the class
+* fields:
+*	string body - code of shader
+*/
 class DefaultShader {
 public:
 	string body;
