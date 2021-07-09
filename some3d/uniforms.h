@@ -11,7 +11,7 @@ using std::string;
 // abstract class, which is parent for any object that can send uniforms
 class UniformsSender {
 public:
-	virtual void send_uniforms(sf::Shader& shader) = 0;
+	virtual void send_uniforms(sf::Shader& shader) const = 0;
 };
 
 /* Parent class for any uniform. Used as interface to send data

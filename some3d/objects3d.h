@@ -20,7 +20,7 @@ public:
 
 	virtual string compose_get_dist() = 0;
 
-	virtual void send_uniforms(sf::Shader& shader) {
+	virtual void send_uniforms(sf::Shader& shader) const override {
 		for (UniformBase* unif : uniforms)
 			unif->send(shader);
 	}
