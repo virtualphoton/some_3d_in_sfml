@@ -148,7 +148,6 @@ vec3 normalize(vec3 const& v) {
 */
 class vec4 : public PossibleUniformData<sf::Glsl::Vec4> {
 public:
-	std::string glsl_type = "vec4"; // for uniforms
 	double coords[4]{ 0,0,0,0 };
 	double& x = coords[0], & y = coords[1], & z = coords[2], & w = coords[3];
 	vec4() {
