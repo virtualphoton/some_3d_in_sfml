@@ -8,7 +8,10 @@ using std::string;
 // uniforms are variables passed to glsl shader(i.e. glsl script) from somewhere outside(c++ code in this case, via sfml).
 // This variables are such structures as vectors, matricex, textures, etc.
 
-// abstract class, which is parent for any object that can send uniforms
+/* abstract class, which is parent for any object that can send uniforms
+*  methods:
+*	send_uniforms(shader) -> sends object's uniforms
+*/
 class UniformsSender {
 public:
 	virtual void send_uniforms(sf::Shader& shader) const = 0;
@@ -53,7 +56,7 @@ public:
 *	id  -> unique id for each uniform(by which its name in shader is built)
 *	T data   -> data of type, that is child of PossibleUniformData
 *	type     -> type of data in glsl script
-*	name	 -> name of uniform (i.e. name of variable in glsl shader)
+*	name	 -> name of variable in glsl shader related to this uniform
 *	code	 -> glsl code for uniform inserted in shader before using the uniform
 */
 template <class T>

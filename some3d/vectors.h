@@ -66,6 +66,8 @@ class mat3;
 *	length(vec)     -> length, surprisingly
 *	normalize(vec)  -> vec in same direction but of length 1. if length of vec is 0, return null-vector
 *	+, -, *, /      -> element-wise operations
+* related constants:
+*	null_vec3 = vec3(0)
 */
 class vec3 : public PossibleUniformData<sf::Glsl::Vec3> {
 public:
@@ -114,6 +116,7 @@ public:
 	}
 	sf::Color color_over(sf::Color const& px_color, double lambda) const;
 };
+vec3 null_vec3(0);
 
 VEC_OP(+, +=);
 VEC_OP(-, -=);

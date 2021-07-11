@@ -22,7 +22,7 @@ public:
 
 		Plane plane_obj({ 0,0,1,0 }, { 1, 1, 1 });
 		Box box_obj({ 4,4,4 }, { 10, .3, 4 }, { 0, 1, 1 });
-		box_obj.color_func = "texture(drawing, vec2(1, 0) + vec2(-1, 1)*(p.xz-vec2(-6, 0))/vec2(20, 8)).xyz";
+		box_obj.color_func_code = "texture(drawing, vec2(1, 0) + vec2(-1, 1)*(p.xz-vec2(-6, 0))/vec2(20, 8)).xyz";
 		sh.append(&plane_obj, &box_obj);
 
 		sh.add_uniform("uniform sampler2D drawing;");

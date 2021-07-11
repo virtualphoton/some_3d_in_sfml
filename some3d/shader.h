@@ -12,7 +12,7 @@ using std::string;
 class Shader {
 public:
 	bool has_changed = true;
-	sf::Shader& compiled_shader = *(new sf::Shader);
+	sf::Shader compiled_shader;
 	std::vector<Obj3d*> objects;
 	string add_functions_s;
 	string add_uniform_s;
@@ -23,7 +23,6 @@ public:
 		has_changed = true;
 		return *this;
 	}
-
 	template <class Head, class ...Tail>
 	Shader& append(Head* obj, Tail * ... args) {
 		objects.push_back(obj);
@@ -54,18 +53,18 @@ public:
 			uniforms.append(obj->compose_uniforms_code());
 
 			if (used_types.find(obj->type) == used_types.end()) {
-				funcs.append(obj->code).append("\n");
+				funcs.append(obj->distance_func_code).append("\n");
 				used_types.insert(obj->type);
 			}
 
 			get_dist_body.append(obj->compose_get_dist())
 				.append("    if (dist < min_dist)\n"
-					"        min_dist = dist;\n");
+					    "        min_dist = dist;\n");
 			get_color_body.append(obj->compose_get_dist())
 				.append("    if (dist < min_dist){\n"
-					"        min_dist = dist;\n"
-					"        color = " + obj->color_func + ";\n"
-					"    }\n");
+						"        min_dist = dist;\n"
+						"        color = " + obj->color_func_code + ";\n"
+						"    }\n");
 		}
 		return default_shader.body + add_uniform_s + add_functions_s + uniforms + funcs + get_color_assemble(get_color_body) + get_dist_assemble(get_dist_body);
 	}
